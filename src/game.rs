@@ -1,8 +1,14 @@
 use std::io::{stdout};
 use crossterm::{            
     cursor::{Hide, MoveTo}, execute, terminal::{
-        Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode
-    }
+        Clear, 
+        ClearType, 
+        EnterAlternateScreen, 
+        LeaveAlternateScreen, 
+        disable_raw_mode, 
+        enable_raw_mode,
+    },
+    event::{EnableMouseCapture, DisableMouseCapture},
 };
 
 use crate::{handlers::{handle_menu, handle_playing}, state::GameState};
@@ -17,6 +23,7 @@ pub fn start_game_session() {
     
     execute!(
         stdout,
+        EnableMouseCapture,
         EnterAlternateScreen,
         Hide,
     ).unwrap(); 
@@ -35,6 +42,7 @@ pub fn start_game_session() {
     }
     execute!(
         stdout,
+        DisableMouseCapture,
         LeaveAlternateScreen,
     ).unwrap();
     disable_raw_mode().unwrap();

@@ -27,6 +27,7 @@ pub struct World {
     pub water_cov: f32,
     pub factions: Vec<Faction>,
     pub game_map: Vec<Vec<Entity>>,
+    pub energy_per_faction: u16,
 }
 
 impl World {
@@ -118,16 +119,37 @@ impl Cell {
         match self {
 
             Self::Empty => Color::Black,
-
             Self::Base => Color::White,
-
             Self::Territory => Color::White,
-
             Self::Fortress => Color::White,
-
             Self::Forest => Color::Green,
-
             Self::Water => Color::Blue,
+        }
+    }
+
+    pub fn cost(self) -> u16 {
+
+        match self {
+
+            Self::Empty => 1,
+            Self::Forest => 2,
+            Self::Territory => 1,
+            Self::Base => 1,
+            Self::Fortress => 999,
+            Self::Water => 999,
+        }
+    }
+
+    pub fn capture_result(self) -> Cell {
+
+        match self {
+
+            Self::Empty => Cell::Territory,
+            Self::Forest => Cell::Territory,
+            Self::Territory => Cell::Fortress,
+            Self::Base => Cell::Fortress,
+            Self::Fortress => Cell::Fortress,
+            Self::Water => Cell::Water,
         }
     }
 }

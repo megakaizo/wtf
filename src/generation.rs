@@ -116,10 +116,19 @@ pub fn init_world(
     forest_cov: f32, 
     total_factions: u16, 
     min_req_base_distance: u16,
+    energy_per_faction: u16,
 ) -> World {
     let game_map: Vec<Vec<Entity>> = init_game_map(height, width);
     let factions: Vec<Faction> = init_factions(total_factions, total_players);
-    let mut world: World = World { width, height, forest_cov, water_cov, game_map, factions };
+    let mut world: World = World { 
+        width, 
+        height, 
+        forest_cov, 
+        water_cov, 
+        game_map, 
+        factions, 
+        energy_per_faction, 
+    };
     let bases_coords = place_bases(&mut world, min_req_base_distance);
     place_terrains(&mut world, &bases_coords);
     world
