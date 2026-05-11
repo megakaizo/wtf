@@ -2,7 +2,9 @@ use std::io::{Stdout, Write};
 
 use crossterm::{queue, cursor::MoveTo, style::Print, event::{Event, read, KeyCode}};
 
-use crate::{generation::init_world, state::GameState, types::{Entity, World}};
+use crate::{generation::init_world, state::GameState};
+use crate::render::render_world;
+
 
 pub fn show_menu(stdout: &mut Stdout) {
     queue!(
@@ -64,12 +66,12 @@ fn draw_border(width: u16, height: u16, stdout: &mut Stdout) {
     }
 }
 
-pub fn handle_playing(stdout: &mut Stdout) {
-    let width: u16 = 20;
-    let height: u16 = 20;
+pub fn handle_playing(state: &mut GameState, stdout: &mut Stdout) {
+    let width: u16 = 40;
+    let height: u16 = 40;
     let forest_cov: f32 = 0.20;
     let water_cov: f32 = 0.15;
-    let total_factions = 4;
+    let total_factions = 8;
     let min_req_base_distance = 7;
     let mut total_players = 1;
 
@@ -82,7 +84,15 @@ pub fn handle_playing(stdout: &mut Stdout) {
         total_factions, 
         min_req_base_distance
     );
-
     draw_border(width, height, stdout);
+    render_world(&world, stdout);
+
+    if let Event::Key(event) = read().unwrap() {
+        match event.code {
+            KeyCode::Esc => *state = GameState::End,
+            _ => {},
+        }
+    }
+
 }
 

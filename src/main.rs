@@ -4,6 +4,7 @@ mod handlers;
 mod generation;
 mod types;
 mod utils;
+mod render;
 
 use crate::game::start_game_session;
 
