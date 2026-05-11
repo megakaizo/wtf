@@ -30,7 +30,7 @@ pub fn start_game_session() {
         match state {
             GameState::Menu => handle_menu(&mut state, &mut stdout),
             GameState::End => break,
-            GameState::Playing => handle_playing(&mut stdout),
+            GameState::Playing => handle_playing(&mut state, &mut stdout),
         }
     }
     execute!(

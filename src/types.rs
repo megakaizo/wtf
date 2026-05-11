@@ -6,15 +6,6 @@ pub struct Coord {
     pub y: u16,
 }
 
-pub type CellType = char;
-
-pub const EMPTY: CellType = ' ';
-pub const BASE: CellType = '@';
-pub const TERRITORY: CellType = '*';
-pub const FORTRESS: CellType = '#';
-pub const FOREST: CellType = '^';
-pub const WATER: CellType = '~';
-
 
 pub struct Faction {
     pub id: u16,
@@ -25,7 +16,7 @@ pub struct Faction {
 
 #[derive(Clone, Copy)]
 pub struct Entity {
-    pub cell_type: CellType,
+    pub cell: Cell,
     pub faction_id: Option<u16>, 
 }
 
@@ -36,6 +27,42 @@ pub struct World {
     pub water_cov: f32,
     pub factions: Vec<Faction>,
     pub game_map: Vec<Vec<Entity>>,
+}
+
+impl World {
+    pub fn get(
+        &self, coord: Coord,
+    ) -> Entity {
+        self.game_map
+            [coord.y as usize]
+            [coord.x as usize]
+    }
+
+    pub fn set(
+        &mut self,
+        coord: Coord,
+        cell: Cell,
+        faction_id: Option<u16>,
+    ) {
+        self.game_map
+            [coord.y as usize]
+            [coord.x as usize]
+                = Entity {
+                    cell,
+                    faction_id,
+                };
+    }
+
+    pub fn get_color(
+        &self, coord: Coord,
+    ) -> Color {
+        let entity = self.get(coord);
+        let mut color = entity.cell.color();
+        if let Some(faction_id) = entity.faction_id {
+            color = self.factions[faction_id as usize].color;
+        };
+    color
+    }
 }
 
 
@@ -59,3 +86,48 @@ pub const FACTION_COLORS: [Color; 16] = [
     Color::AnsiValue(220), // 14 gold
     Color::AnsiValue(198), // 15 pink
 ];
+
+
+#[derive(Clone, Copy, PartialEq)]
+pub enum Cell {
+    Empty,
+    Base,
+    Territory,
+    Fortress,
+    Forest,
+    Water,
+}
+
+
+impl Cell {
+    pub fn glyph(self) -> char {
+
+        match self {
+
+            Self::Empty => ' ',
+            Self::Base => '@',
+            Self::Territory => '*',
+            Self::Fortress => '#',
+            Self::Forest => '^',
+            Self::Water => '~',
+        }
+    }
+
+    pub fn color(self) -> Color {
+
+        match self {
+
+            Self::Empty => Color::Black,
+
+            Self::Base => Color::White,
+
+            Self::Territory => Color::White,
+
+            Self::Fortress => Color::White,
+
+            Self::Forest => Color::Green,
+
+            Self::Water => Color::Blue,
+        }
+    }
+}

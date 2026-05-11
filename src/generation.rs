@@ -2,17 +2,14 @@ use rand::{rng, RngExt};
 
 use crate::{
     types::{
-        BASE, 
+        Cell,
         Coord, 
-        EMPTY, 
         Entity, 
         FACTION_COLORS, 
-        Faction, 
-        WATER, 
-        FOREST, 
+        Faction,  
         World
     }, 
-    utils::{manhattan, place_entity, random_coord}
+    utils::{manhattan, random_coord}
 };
 
 
@@ -20,7 +17,7 @@ fn init_game_map(height: u16, width: u16) -> Vec<Vec<Entity>> {
     let game_map: Vec<Vec<Entity>> = vec![
         vec![
             Entity{
-                cell_type: EMPTY,
+                cell: Cell::Empty,
                 faction_id: None,
             };
             width as usize
@@ -46,7 +43,7 @@ fn init_factions(total_factions: u16, total_players: &mut i32) -> Vec<Faction> {
 }
 
 
-fn calculate_bases_coords(world: &mut World, min_req_base_distance: u16) -> (Vec<Coord>, Vec<u16>) {
+fn calculate_bases_coords(world: &World, min_req_base_distance: u16) -> (Vec<Coord>, Vec<u16>) {
     let mut bases_coords: Vec<Coord> = Vec::new();
     let mut bases_ids: Vec<u16> = Vec::new();
 
@@ -75,7 +72,7 @@ fn calculate_bases_coords(world: &mut World, min_req_base_distance: u16) -> (Vec
 fn place_bases(world: &mut World, min_req_base_distance: u16) -> Vec<Coord>{
     let (bases_coords, ids): (Vec<Coord>, Vec<u16>) = calculate_bases_coords(world, min_req_base_distance);
     for (base_coord, faction_id) in bases_coords.iter().zip(ids.iter()) {
-        place_entity(world, *base_coord, BASE, Some(*faction_id));
+        world.set(*base_coord, Cell::Base, Some(*faction_id));
     }
     bases_coords
 }
@@ -85,7 +82,7 @@ fn place_terrains(world: &mut World, bases_coords: &[Coord]) {
     for y in 0..world.height {
         for x in 0..world.width {
             let coord = Coord { x, y };
-            if world.game_map[y as usize][x as usize].cell_type == BASE {
+            if world.get(coord).cell == Cell::Base {
                 continue;
             }
 
@@ -93,7 +90,7 @@ fn place_terrains(world: &mut World, bases_coords: &[Coord]) {
             for base_coord in bases_coords {
                 if manhattan(coord, *base_coord) < 5 {
                     near_base = true;
-                    continue;
+                    break;
                 }
             }
             if near_base {
@@ -101,9 +98,9 @@ fn place_terrains(world: &mut World, bases_coords: &[Coord]) {
             }
             let r: f32 = rng().random();
             if r < world.water_cov {
-                place_entity(world, coord, WATER, None);
+                world.set(coord, Cell::Water, None);
             } else if r < world.water_cov + world.forest_cov {
-                place_entity(world, coord, FOREST, None);    
+                world.set(coord, Cell::Forest, None);    
             };
             continue;
         }

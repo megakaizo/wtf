@@ -1,6 +1,6 @@
 use rand::{rng, RngExt};
 
-use crate::types::{CellType, Coord, Entity, World};
+use crate::types::{Coord};
 
 
 pub fn manhattan(c1: Coord, c2: Coord) -> u16 {
@@ -17,14 +17,3 @@ pub fn random_coord(width: u16, height: u16) -> Coord {
 }
 
 
-pub fn place_entity(
-    world: &mut World, 
-    coord: Coord, 
-    entity_type: CellType, 
-    faction_id: Option<u16>
-) {
-    world.game_map
-        [coord.y as usize]
-        [coord.x as usize]
-            = Entity { cell_type: entity_type, faction_id: faction_id }    
-}
