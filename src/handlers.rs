@@ -1,72 +1,18 @@
-use std::io::{Stdout, Write};
+use std::io::{Stdout};
 
-use crossterm::{
-    queue, 
-    cursor::MoveTo, 
-    style::Print, 
-    event::{Event, read, KeyCode, MouseEventKind, MouseButton}
-};
+use crossterm::{event::{Event, read, KeyCode, MouseEventKind, MouseButton}};
 
-use crate::{generation::init_world, state::GameState, types::{Coord, Faction, World}, utils::validate_action};
-use crate::render::render_world;
-
-
-pub fn show_menu(stdout: &mut Stdout) {
-    queue!(
-        stdout,
-        MoveTo(10, 5),
-        Print("War. Territory. Fortress."),
-
-        MoveTo(10, 7),
-        Print("[SPACE] -> START | [ESC] -> EXIT"),
-    ).unwrap();
-}
+use crate::{generation::init_world, state::GameState, types::{Coord, World}, utils::validate_action};
+use crate::render::{render_world, draw_border, show_menu};
 
 
 pub fn handle_menu(state: &mut GameState, stdout: &mut Stdout) {
     show_menu(stdout);
-    stdout.flush().unwrap();
     if let Event::Key(event) = read().unwrap() {
         match event.code {
             KeyCode::Esc => *state = GameState::End,
             KeyCode::Char(' ') => *state = GameState::Playing,
             _ => {},
-        }
-    }
-}
-
-
-fn draw_border(width: u16, height: u16, stdout: &mut Stdout) {
-    let max_width = width + 1;
-    let max_height = height + 1;
-
-    for y in 0..=max_height {
-        for x in 0..=max_width {
-            let ch = match (x, y) {
-
-                (0, 0) => '+',
-                (w, 0) if w == max_width => '+',
-
-                (0, h) if h == max_height => '+',
-
-                (w, h)
-                    if w == max_width
-                    && h == max_height => '+',
-
-                (0, _) => '|',
-                (w, _) if w == max_width => '|',
-
-                (_, 0) => '=',
-
-                (_, h) if h == max_height => '=',
-
-                _ => ' ',
-            }; 
-            queue!(
-                stdout,
-                MoveTo(x, y),
-                Print(ch)
-            ).unwrap();
         }
     }
 }
@@ -94,6 +40,7 @@ fn make_action(
         world.set(coord, captured_cell, Some(*faction_id));
     }
 }
+
 
 fn turn_player(world: &mut World, faction_id: u16, stdout: &mut Stdout) {
     let mut energy_points = world.energy_per_faction;
@@ -131,8 +78,8 @@ pub fn start_game_cycle(world: &mut World, stdout: &mut Stdout) {
 
 
 pub fn handle_playing(state: &mut GameState, stdout: &mut Stdout) {
-    let width: u16 = 40;
-    let height: u16 = 40;
+    let width: u16 = 20;
+    let height: u16 = 20;
     let forest_cov: f32 = 0.20;
     let water_cov: f32 = 0.15;
     let total_factions = 4;
