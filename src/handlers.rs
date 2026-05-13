@@ -49,16 +49,21 @@ fn turn_player(world: &mut World, faction_id: u16, stdout: &mut Stdout) {
             Event::Mouse(event) => {
                 match event.kind {
                     MouseEventKind::Down(MouseButton::Left) => {
+                        if event.column == 0 || event.row == 0 {
+                            continue;
+                        }
                         let x = event.column - 1;
                         let y = event.row - 1;
                         let coord = Coord { x, y };
-                        make_action(
-                            coord, 
-                            &faction_id, 
-                            &mut energy_points,
-                            world,
-                        );
-                        render_world(world, stdout);
+                        if world.in_bounds(coord) {
+                            make_action(
+                                coord, 
+                                &faction_id, 
+                                &mut energy_points,
+                                world,
+                            );
+                            render_world(world, stdout);
+                        }
                     }
                     _ => {}
                 }
