@@ -1,5 +1,3 @@
-use std::usize;
-
 use crossterm::style::Color;
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
@@ -120,6 +118,7 @@ pub enum Cell {
     Forest,
     Water,
     Mountain,
+    Bridge,
 }
 
 
@@ -135,6 +134,7 @@ impl Cell {
             Self::Forest => '^',
             Self::Water => '~',
             Self::Mountain => '▲',
+            Self::Bridge => '=',
         }
     }
 
@@ -149,6 +149,7 @@ impl Cell {
             Self::Forest => Color::Green,
             Self::Water => Color::Blue,
             Self::Mountain => Color::Grey,
+            Self::Bridge => Color::White,
         }
     }
 
@@ -161,8 +162,9 @@ impl Cell {
             Self::Territory => 1,
             Self::Base => 1,
             Self::Fortress => 999,
-            Self::Water => 999,
+            Self::Water => 4,
             Self::Mountain => 3,
+            Self::Bridge => 1,
         }
     }
 
@@ -175,8 +177,9 @@ impl Cell {
             Self::Territory => Cell::Fortress,
             Self::Base => Cell::Fortress,
             Self::Fortress => Cell::Fortress,
-            Self::Water => Cell::Water,
+            Self::Water => Cell::Bridge,
             Self::Mountain => Cell::Territory,
+            Self::Bridge => Cell::Bridge,
         }
     }
 }

@@ -62,7 +62,7 @@ pub fn get_neighboors(coord: &Coord, world: &World, include_diagonal: bool) -> V
 }
 
 
-fn check_fortress_supply(coord: &Coord, world: &World, faction_id: &u16) -> bool {
+fn check_supply(coord: &Coord, world: &World, faction_id: &u16) -> bool {
     let dirs = vec![
         (1, 0),
         (0, 1),
@@ -95,7 +95,7 @@ fn check_fortress_supply(coord: &Coord, world: &World, faction_id: &u16) -> bool
                 Cell::Base | Cell::Territory => {
                     return true;
                 }
-                Cell::Fortress => {
+                Cell::Fortress | Cell::Bridge => {
                     if visited.insert(next) {
                         queue.push_back(next);
                     }
@@ -117,8 +117,8 @@ pub fn validate_action(coord: &Coord, world: &World, faction_id: &u16) -> bool {
         match entity.cell {
             Cell::Base => true,
             Cell::Territory => true,
-            Cell::Fortress => {
-                check_fortress_supply(coord, world, faction_id)
+            Cell::Fortress | Cell::Bridge => {
+                check_supply(coord, world, faction_id)
             },
             _ => false,
         }
