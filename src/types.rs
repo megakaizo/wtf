@@ -14,17 +14,20 @@ pub struct Faction {
     pub is_ai: bool,
 }
 
+
 #[derive(Clone, Copy)]
 pub struct Entity {
     pub cell: Cell,
     pub faction_id: Option<u16>, 
 }
 
+
 pub struct World {
     pub width: u16,
     pub height: u16,
     pub forest_cov: f32,
     pub water_cov: f32,
+    pub mountains_cov: f32,
     pub factions: Vec<Faction>,
     pub game_map: Vec<Vec<Entity>>,
     pub energy_per_faction: u16,
@@ -64,7 +67,15 @@ impl World {
         };
     color
     }
-}
+    pub fn in_bounds(
+        &self,
+        coord: Coord,
+    ) -> bool {
+
+        coord.x < self.width
+            && coord.y < self.height
+        }
+    }
 
 
 pub const FACTION_COLORS: [Color; 16] = [
@@ -97,6 +108,7 @@ pub enum Cell {
     Fortress,
     Forest,
     Water,
+    Mountain,
 }
 
 
@@ -111,6 +123,7 @@ impl Cell {
             Self::Fortress => '#',
             Self::Forest => '^',
             Self::Water => '~',
+            Self::Mountain => '▲',
         }
     }
 
@@ -124,6 +137,7 @@ impl Cell {
             Self::Fortress => Color::White,
             Self::Forest => Color::Green,
             Self::Water => Color::Blue,
+            Self::Mountain => Color::Grey,
         }
     }
 
@@ -137,6 +151,7 @@ impl Cell {
             Self::Base => 1,
             Self::Fortress => 999,
             Self::Water => 999,
+            Self::Mountain => 3,
         }
     }
 
@@ -150,6 +165,7 @@ impl Cell {
             Self::Base => Cell::Fortress,
             Self::Fortress => Cell::Fortress,
             Self::Water => Cell::Water,
+            Self::Mountain => Cell::Territory,
         }
     }
 }

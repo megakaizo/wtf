@@ -45,23 +45,33 @@ fn make_action(
 fn turn_player(world: &mut World, faction_id: u16, stdout: &mut Stdout) {
     let mut energy_points = world.energy_per_faction;
     while energy_points > 0 {
-        if let Event::Mouse(event) = read().unwrap() {
-            match event.kind {
-                MouseEventKind::Down(MouseButton::Left) => {
-                    let x = event.column - 1;
-                    let y = event.row - 1;
-                    let coord = Coord { x, y };
-                    make_action(
-                        coord, 
-                        &faction_id, 
-                        &mut energy_points,
-                        world,
-                    );
-                    render_world(world, stdout);
+        match read().unwrap() {
+            Event::Mouse(event) => {
+                match event.kind {
+                    MouseEventKind::Down(MouseButton::Left) => {
+                        let x = event.column - 1;
+                        let y = event.row - 1;
+                        let coord = Coord { x, y };
+                        make_action(
+                            coord, 
+                            &faction_id, 
+                            &mut energy_points,
+                            world,
+                        );
+                        render_world(world, stdout);
+                    }
+                    _ => {}
                 }
-                _ => {}
             }
-        } 
+            Event::Key(event) => {
+                match event.code {
+                    KeyCode::Esc => break,
+                    _ => {},
+
+                }
+            }
+            _ => {} 
+        }
     }
 }
 
@@ -78,10 +88,11 @@ pub fn start_game_cycle(world: &mut World, stdout: &mut Stdout) {
 
 
 pub fn handle_playing(state: &mut GameState, stdout: &mut Stdout) {
-    let width: u16 = 20;
-    let height: u16 = 20;
+    let width: u16 = 40;
+    let height: u16 = 40;
     let forest_cov: f32 = 0.20;
     let water_cov: f32 = 0.15;
+    let mountains_cov: f32 = 0.05;
     let total_factions = 4;
     let min_req_base_distance = 7;
     let mut total_players = 1;
@@ -92,14 +103,14 @@ pub fn handle_playing(state: &mut GameState, stdout: &mut Stdout) {
         width, 
         height, 
         water_cov,
-        forest_cov, 
+        forest_cov,
+        mountains_cov,
         total_factions, 
         min_req_base_distance,
         energy_per_faction,
     );
     draw_border(width, height, stdout);
     render_world(&world, stdout);
-
     start_game_cycle(&mut world, stdout); 
 
 }
