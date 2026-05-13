@@ -81,10 +81,11 @@ fn check_fortress_supply(coord: &Coord, world: &World, faction_id: &u16) -> bool
             if nx < 0 || ny < 0 {
                 continue;
             }
-            if !world.in_bounds(coord) {
+
+            let next = Coord{x: nx as u16, y: ny as u16};
+            if !world.in_bounds(next) {
                 continue;
             }
-            let next = Coord{x: nx as u16, y: ny as u16};
             let neighboor = world.get(next);
             if neighboor.faction_id != Some(*faction_id) {
                 continue;
