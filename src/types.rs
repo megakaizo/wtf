@@ -1,6 +1,6 @@
 use crossterm::style::Color;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Coord {
     pub x: u16,
     pub y: u16,
