@@ -2,7 +2,7 @@ use std::io::{Stdout};
 
 use crossterm::{event::{Event, read, KeyCode, MouseEventKind, MouseButton}};
 
-use crate::{generation::init_world, state::GameState, types::{Coord, World}, utils::validate_action};
+use crate::{generation::init_world, state::GameState, types::{Cell, Coord, World}, utils::validate_action};
 use crate::render::{render_world, draw_border, show_menu};
 
 
@@ -37,6 +37,10 @@ fn make_action(
         };
         *energy_points -= move_cost;
         let captured_cell = old_entity.cell.capture_result();
+        if let Some(captured_entity_faction_id) = old_entity.faction_id 
+            && old_entity.cell == Cell::Base {
+                world.factions[captured_entity_faction_id as usize].is_dead = true;
+        }
         world.set(coord, captured_cell, Some(*faction_id));
     }
 }
@@ -86,6 +90,9 @@ pub fn start_game_cycle(world: &mut World, stdout: &mut Stdout) {
 
     loop {
         for i in 0..factions_len {
+            if world.factions[i].is_dead {
+                continue;
+            }
             turn_player(world, i as u16, stdout);
         }
     }
