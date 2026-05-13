@@ -1,3 +1,5 @@
+use std::usize;
+
 use crossterm::style::Color;
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
@@ -74,8 +76,17 @@ impl World {
 
         coord.x < self.width
             && coord.y < self.height
-        }
     }
+
+    pub fn kill_faction(
+        &mut self,
+        faction_id: u16
+    ) {
+        let faction = &mut self.factions[faction_id as usize];
+        faction.is_dead = true;
+        faction.color = Color::DarkGrey;
+    }
+}
 
 
 pub const FACTION_COLORS: [Color; 16] = [

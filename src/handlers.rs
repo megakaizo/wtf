@@ -39,7 +39,7 @@ fn make_action(
         let captured_cell = old_entity.cell.capture_result();
         if let Some(captured_entity_faction_id) = old_entity.faction_id 
             && old_entity.cell == Cell::Base {
-                world.factions[captured_entity_faction_id as usize].is_dead = true;
+                world.kill_faction(captured_entity_faction_id);
         }
         world.set(coord, captured_cell, Some(*faction_id));
     }
@@ -100,8 +100,8 @@ pub fn start_game_cycle(world: &mut World, stdout: &mut Stdout) {
 
 
 pub fn handle_playing(state: &mut GameState, stdout: &mut Stdout) {
-    let width: u16 = 40;
-    let height: u16 = 40;
+    let width: u16 = 20;
+    let height: u16 = 20;
     let forest_cov: f32 = 0.20;
     let water_cov: f32 = 0.15;
     let mountains_cov: f32 = 0.05;
