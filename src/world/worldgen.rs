@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use rand::{rng, RngExt};
 
 use crate::{
@@ -43,7 +45,7 @@ fn init_factions(total_factions: u16, total_players: &mut i32) -> Vec<Faction> {
         if *total_players <= 0 {
             is_ai = true;
         }
-        factions.push(Faction { id: faction_id, color, is_dead: false, is_ai: is_ai });
+        factions.push(Faction { id: faction_id, color, is_dead: false, is_ai: is_ai, lands: HashMap::new() });
         *total_players -= 1;
     }
     factions

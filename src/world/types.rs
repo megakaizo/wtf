@@ -1,4 +1,7 @@
+use std::collections::HashMap;
+
 use crossterm::style::Color;
+
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Coord {
@@ -9,6 +12,7 @@ pub struct Coord {
 
 pub struct Faction {
     pub id: u16,
+    pub lands: HashMap<Coord, Entity>,
     pub color: Color,
     pub is_dead: bool,
     pub is_ai: bool,
@@ -48,13 +52,21 @@ impl World {
         cell: Cell,
         faction_id: Option<u16>,
     ) {
+        let old_entity = self.get(coord);
+        let entity = Entity{cell, faction_id};
         self.game_map
             [coord.y as usize]
             [coord.x as usize]
-                = Entity {
-                    cell,
-                    faction_id,
-                };
+                = entity;
+
+        if let Some(new_faction_id) = faction_id {
+            let new_faction = &mut self.factions[new_faction_id as usize];
+            new_faction.lands.insert(coord, entity);
+        }
+        if let Some(old_faction_id) = old_entity.faction_id {
+            let old_faction = &mut self.factions[old_faction_id as usize];
+            old_faction.lands.remove(&coord);
+        }
     }
 
     pub fn get_color(
@@ -83,6 +95,7 @@ impl World {
         let faction = &mut self.factions[faction_id as usize];
         faction.is_dead = true;
         faction.color = Color::DarkGrey;
+        faction.lands = HashMap::new();
     }
 }
 
@@ -180,6 +193,20 @@ impl Cell {
             Self::Water => Cell::Bridge,
             Self::Mountain => Cell::Territory,
             Self::Bridge => Cell::Bridge,
+        }
+    }
+
+    pub fn vision(self) -> u16 {
+        match self {
+            Self::Empty => 0,
+            Self::Forest => 0,
+            Self::Territory => 5,
+            Self::Base => 5,
+            Self::Fortress => 5,
+            Self::Water => 0,
+            Self::Mountain => 0,
+            Self::Bridge => 5,
+
         }
     }
 }
