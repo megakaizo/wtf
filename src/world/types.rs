@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crossterm::style::Color;
+use crossterm::style::{Color, Attribute};
 
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
@@ -97,6 +97,7 @@ impl World {
         faction.color = Color::DarkGrey;
         faction.lands = HashMap::new();
     }
+
 }
 
 
@@ -206,6 +207,20 @@ impl Cell {
             Self::Water => 0,
             Self::Mountain => 0,
             Self::Bridge => 5,
+
+        }
+    }
+
+    pub fn attribute(self) -> Attribute {
+        match self {
+            Self::Empty => Attribute::NormalIntensity,
+            Self::Forest => Attribute::NormalIntensity,
+            Self::Territory => Attribute::NormalIntensity,
+            Self::Base => Attribute::Bold,
+            Self::Fortress => Attribute::NormalIntensity,
+            Self::Water => Attribute::NormalIntensity,
+            Self::Mountain => Attribute::NormalIntensity,
+            Self::Bridge => Attribute::Bold,
 
         }
     }
