@@ -6,8 +6,8 @@ use crate::gameplay::turns::start_game_cycle;
 
 
 pub fn run_gameplay(stdout: &mut Stdout) {
-    let width: u16 = 20;
-    let height: u16 = 20;
+    let width: u16 = 80;
+    let height: u16 = 40;
     let forest_cov: f32 = 0.20;
     let water_cov: f32 = 0.15;
     let mountains_cov: f32 = 0.05;
