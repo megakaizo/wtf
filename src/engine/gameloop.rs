@@ -11,8 +11,9 @@ use crossterm::{
     event::{EnableMouseCapture, DisableMouseCapture},
 };
 
-use crate::{handlers::{handle_menu, handle_playing}, state::GameState};
-
+use crate::menu::input::run_menu;
+use crate::engine::states::GameState;
+use crate::gameplay::start::run_gameplay;
 
 
 pub fn start_game_session() {
@@ -35,9 +36,9 @@ pub fn start_game_session() {
             MoveTo(0, 0),
         ).unwrap();
         match state {
-            GameState::Menu => handle_menu(&mut state, &mut stdout),
+            GameState::Menu => run_menu(&mut state, &mut stdout),
             GameState::End => break,
-            GameState::Playing => handle_playing(&mut state, &mut stdout),
+            GameState::Playing => run_gameplay(&mut stdout),
         }
     }
     execute!(

@@ -1,15 +1,22 @@
 use rand::{rng, RngExt};
 
 use crate::{
-    types::{
-        Cell,
-        Coord, 
-        Entity, 
-        FACTION_COLORS, 
-        Faction,  
-        World
-    }, 
-    utils::{get_neighboors, manhattan, random_coord, set_on_map}
+    world::{
+        types::{
+            Cell,
+            Coord, 
+            Entity, 
+            FACTION_COLORS, 
+            Faction,  
+            World
+        }, 
+        map::{
+            get_neighboors, 
+            manhattan, 
+            random_coord, 
+            set_on_map
+        }
+    }
 };
 
 
