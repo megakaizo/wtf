@@ -66,15 +66,22 @@ impl World {
         })
     }
 
-    fn turn_next_faction(&mut self) {
+    fn turn_next_faction(&mut self) { 
         self.factions[self.current_move_faction_id as usize]
             .current_move_energy = self.energy_per_faction;
 
-        let mut next_faction_id = self.current_move_faction_id + 1;
-        if next_faction_id >= self.factions.len() as u16 {
-           next_faction_id = 0; 
+        let mut faction_id = self.current_move_faction_id;
+        loop {
+            faction_id += 1;
+            if faction_id >= self.factions.len() as u16 {
+                faction_id = 0; 
+            }
+            
+            if !self.factions[faction_id as usize].is_dead {
+                break;
+            }
         }
-        self.current_move_faction_id = next_faction_id;
+        self.current_move_faction_id = faction_id;
     }
 
     pub fn action(&mut self, coord: Coord) {

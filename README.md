@@ -1,5 +1,6 @@
 # W.T.F - War. Territory. Fortress
 
-### ASCII Strategy Terminal Game.
+### Programmable strategy simulation Game / Engine.
 
-![img](assets/demo_map_80x40.png)
+### Game in ASCII terminal client 
+![img](assets/20x40_war.png)
