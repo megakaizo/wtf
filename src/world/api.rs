@@ -1,7 +1,21 @@
+use rand::{rng, RngExt};
+
 use crate::world::types::{Coord, Entity, World, Cell};
 
 
 impl World {
+    pub fn manhattan(&self, c1: Coord, c2: Coord) -> u16 {
+        let dx = c1.x.abs_diff(c2.x);
+        let dy = c1.y.abs_diff(c2.y);
+        dx + dy
+    } 
+
+    pub fn random_coord(&self, width: u16, height: u16) -> Coord {
+        let x = rng().random_range(0..width);
+        let y = rng().random_range(0..height);
+        Coord { x, y } 
+    }
+
     fn idx(&self, coord: Coord) -> usize {
         coord.y as usize * self.width as usize + coord.x as usize
     }
