@@ -3,4 +3,7 @@
 ### Programmable strategy simulation Game / Engine.
 
 ### Game in ASCII terminal client 
-![img](assets/20x40_war.png)
+
+<p align="center">
+  <img src="assets/20x40_war.png" width="700">
+</p>
