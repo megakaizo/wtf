@@ -11,9 +11,9 @@ use crossterm::{
     event::{EnableMouseCapture, DisableMouseCapture},
 };
 
-use crate::menu::input::run_menu;
-use crate::engine::states::GameState;
-use crate::gameplay::start::run_gameplay;
+use crate::terminal::menu::input::run_menu;
+use crate::terminal::gameplay::states::GameState;
+use crate::terminal::gameplay::start::run_gameplay;
 
 
 pub fn start_game_session() {

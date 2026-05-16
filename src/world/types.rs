@@ -1,7 +1,5 @@
 use std::collections::HashMap;
 
-use crossterm::style::{Color, Attribute};
-
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Coord {
@@ -13,9 +11,9 @@ pub struct Coord {
 pub struct Faction {
     pub id: u16,
     pub lands: HashMap<Coord, Entity>,
-    pub color: Color,
     pub is_dead: bool,
     pub is_ai: bool,
+    pub current_move_energy: u16,
 }
 
 
@@ -29,98 +27,11 @@ pub struct Entity {
 pub struct World {
     pub width: u16,
     pub height: u16,
-    pub forest_cov: f32,
-    pub water_cov: f32,
-    pub mountains_cov: f32,
     pub factions: Vec<Faction>,
-    pub game_map: Vec<Vec<Entity>>,
+    pub map: Vec<Entity>,
     pub energy_per_faction: u16,
+    pub current_move_faction_id: u16, 
 }
-
-impl World {
-    pub fn get(
-        &self, coord: Coord,
-    ) -> Entity {
-        self.game_map
-            [coord.y as usize]
-            [coord.x as usize]
-    }
-
-    pub fn set(
-        &mut self,
-        coord: Coord,
-        cell: Cell,
-        faction_id: Option<u16>,
-    ) {
-        let old_entity = self.get(coord);
-        let entity = Entity{cell, faction_id};
-        self.game_map
-            [coord.y as usize]
-            [coord.x as usize]
-                = entity;
-
-        if let Some(new_faction_id) = faction_id {
-            let new_faction = &mut self.factions[new_faction_id as usize];
-            new_faction.lands.insert(coord, entity);
-        }
-        if let Some(old_faction_id) = old_entity.faction_id {
-            let old_faction = &mut self.factions[old_faction_id as usize];
-            old_faction.lands.remove(&coord);
-        }
-    }
-
-    pub fn get_color(
-        &self, coord: Coord,
-    ) -> Color {
-        let entity = self.get(coord);
-        let mut color = entity.cell.color();
-        if let Some(faction_id) = entity.faction_id {
-            color = self.factions[faction_id as usize].color;
-        };
-    color
-    }
-    pub fn in_bounds(
-        &self,
-        coord: Coord,
-    ) -> bool {
-
-        coord.x < self.width
-            && coord.y < self.height
-    }
-
-    pub fn kill_faction(
-        &mut self,
-        faction_id: u16
-    ) {
-        let faction = &mut self.factions[faction_id as usize];
-        faction.is_dead = true;
-        faction.color = Color::DarkGrey;
-        faction.lands = HashMap::new();
-    }
-
-}
-
-
-pub const FACTION_COLORS: [Color; 16] = [
-    Color::AnsiValue(196), // 0  bright red
-    Color::AnsiValue(33),  // 1  bright blue
-    Color::AnsiValue(46),  // 2  bright green
-    Color::AnsiValue(226), // 3  yellow
-    Color::AnsiValue(201), // 4  magenta
-    Color::AnsiValue(51),  // 5  cyan
-
-    Color::AnsiValue(208), // 6  orange
-    Color::AnsiValue(129), // 7  purple
-    Color::AnsiValue(154), // 8  lime
-    Color::AnsiValue(39),  // 9  sky blue
-
-    Color::AnsiValue(202), // 10 deep orange
-    Color::AnsiValue(93),  // 11 dark violet
-    Color::AnsiValue(82),  // 12 toxic green
-    Color::AnsiValue(45),  // 13 aqua
-    Color::AnsiValue(220), // 14 gold
-    Color::AnsiValue(198), // 15 pink
-];
 
 
 #[derive(Clone, Copy, PartialEq)]
@@ -136,37 +47,7 @@ pub enum Cell {
 }
 
 
-impl Cell {
-    pub fn glyph(self) -> char {
-
-        match self {
-
-            Self::Empty => ' ',
-            Self::Base => '@',
-            Self::Territory => '*',
-            Self::Fortress => '#',
-            Self::Forest => '^',
-            Self::Water => '~',
-            Self::Mountain => '▲',
-            Self::Bridge => '=',
-        }
-    }
-
-    pub fn color(self) -> Color {
-
-        match self {
-
-            Self::Empty => Color::Black,
-            Self::Base => Color::White,
-            Self::Territory => Color::White,
-            Self::Fortress => Color::White,
-            Self::Forest => Color::Green,
-            Self::Water => Color::Blue,
-            Self::Mountain => Color::Grey,
-            Self::Bridge => Color::White,
-        }
-    }
-
+impl Cell { 
     pub fn cost(self) -> u16 {
 
         match self {
@@ -207,20 +88,6 @@ impl Cell {
             Self::Water => 0,
             Self::Mountain => 0,
             Self::Bridge => 5,
-
-        }
-    }
-
-    pub fn attribute(self) -> Attribute {
-        match self {
-            Self::Empty => Attribute::NormalIntensity,
-            Self::Forest => Attribute::NormalIntensity,
-            Self::Territory => Attribute::NormalIntensity,
-            Self::Base => Attribute::Bold,
-            Self::Fortress => Attribute::NormalIntensity,
-            Self::Water => Attribute::NormalIntensity,
-            Self::Mountain => Attribute::NormalIntensity,
-            Self::Bridge => Attribute::Bold,
 
         }
     }

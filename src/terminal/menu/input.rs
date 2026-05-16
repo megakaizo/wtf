@@ -2,8 +2,8 @@ use std::io::{Stdout};
 
 use crossterm::{event::{Event, read, KeyCode}};
 
-use crate::rendering::menu::show_menu;
-use crate::engine::states::GameState;
+use crate::terminal::rendering::menu::show_menu;
+use crate::terminal::gameplay::states::GameState;
 
 
 pub fn run_menu(state: &mut GameState, stdout: &mut Stdout) {

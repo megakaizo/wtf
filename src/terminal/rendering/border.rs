@@ -12,21 +12,21 @@ pub fn draw_border(width: u16, height: u16, stdout: &mut Stdout) {
         for x in 0..=max_width {
             let ch = match (x, y) {
 
-                (0, 0) => '+',
-                (w, 0) if w == max_width => '+',
+                (0, 0) => '╔',
+                (w, 0) if w == max_width => '╗',
 
-                (0, h) if h == max_height => '+',
+                (0, h) if h == max_height => '╚',
 
                 (w, h)
                     if w == max_width
-                    && h == max_height => '+',
+                    && h == max_height => '╝',
 
-                (0, _) => '|',
-                (w, _) if w == max_width => '|',
+                (0, _) => '║',
+                (w, _) if w == max_width => '║',
 
-                (_, 0) => '=',
+                (_, 0) => '═',
 
-                (_, h) if h == max_height => '=',
+                (_, h) if h == max_height => '═',
 
                 _ => ' ',
             }; 

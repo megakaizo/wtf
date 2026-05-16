@@ -1,8 +1,8 @@
 use std::io::Stdout;
 
-use crate::world::worldgen::init_world;
-use crate::rendering::{world_map::render_world, border::draw_border};
-use crate::gameplay::turns::start_game_cycle;
+use crate::world::types::World;
+use crate::terminal::rendering::{world_map::render_world, border::draw_border};
+use crate::terminal::gameplay::turns::start_game_cycle;
 
 
 pub fn run_gameplay(stdout: &mut Stdout) {
@@ -16,7 +16,7 @@ pub fn run_gameplay(stdout: &mut Stdout) {
     let mut total_players = 1;
     let energy_per_faction = 5;
 
-    let mut world = init_world(
+    let mut world = World::generate(
         &mut total_players, 
         width, 
         height, 
