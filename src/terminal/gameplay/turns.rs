@@ -4,7 +4,7 @@ use crossterm::{event::{Event, read, KeyCode, MouseEventKind, MouseButton}};
 
 use crate::world::types::{World, Coord};
 
-use crate::terminal::rendering::world_map::render_world;
+use crate::terminal::rendering::world_map::{render_world, render_faction_view};
 
 
 fn turn_player(world: &mut World, stdout: &mut Stdout) {
@@ -20,7 +20,7 @@ fn turn_player(world: &mut World, stdout: &mut Stdout) {
                     let coord = Coord { x, y };
                     if world.in_bounds(coord) {
                         world.action(coord);
-                        render_world(world, stdout);
+                        render_faction_view(world, stdout);
                     }
                 }
                 _ => {}

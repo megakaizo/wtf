@@ -17,7 +17,7 @@ pub struct Faction {
 }
 
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Hash, Eq, PartialEq)]
 pub struct Entity {
     pub cell: Cell,
     pub faction_id: Option<u16>, 
@@ -34,7 +34,7 @@ pub struct World {
 }
 
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Cell {
     Empty,
     Base,
@@ -78,7 +78,7 @@ impl Cell {
         }
     }
 
-    pub fn vision(self) -> u16 {
+    pub fn vision(self) -> i32 {
         match self {
             Self::Empty => 0,
             Self::Forest => 0,

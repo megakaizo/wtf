@@ -1,7 +1,7 @@
 use std::io::Stdout;
 
 use crate::world::types::World;
-use crate::terminal::rendering::{world_map::render_world, border::draw_border};
+use crate::terminal::rendering::{world_map::{render_world, render_faction_view}, border::draw_border};
 use crate::terminal::gameplay::turns::start_game_cycle;
 
 
@@ -28,7 +28,7 @@ pub fn run_gameplay(stdout: &mut Stdout) {
         energy_per_faction,
     );
     draw_border(width, height, stdout);
-    render_world(&world, stdout);
+    render_faction_view(&mut world, stdout);
     start_game_cycle(&mut world, stdout); 
 
 }

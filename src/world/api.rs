@@ -1,3 +1,5 @@
+use std::collections::{VecDeque, HashSet};
+
 use rand::{rng, RngExt};
 
 use crate::world::types::{Coord, Entity, World, Cell};
@@ -109,7 +111,6 @@ impl World {
         }
     
         total_neighbors
-    }
-
+    } 
 }
 

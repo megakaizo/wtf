@@ -1,11 +1,38 @@
 use std::io::{Stdout, Write};
 use crossterm::{
     style::{
-        SetForegroundColor, ResetColor, Print, SetAttribute, Attribute
+        SetForegroundColor, ResetColor, Print, SetAttribute, Attribute, Color
     }, queue, cursor::MoveTo
 }; 
 
-use crate::world::types::World;
+use crate::world::types::{Coord, World, Entity};
+
+
+fn set_entity_render(world: &World, coord: &Coord, entity: &Entity, stdout: &mut Stdout) {
+    let glyph = entity.cell.glyph();
+    let attr = entity.cell.attribute();
+    let color = world.get_color(*coord);
+    queue!(
+        stdout,
+        MoveTo(coord.x + 1, coord.y + 1),
+        SetForegroundColor(color),
+        SetAttribute(attr),
+        Print(glyph),
+        ResetColor,
+        SetAttribute(Attribute::Reset),
+    ).unwrap();
+}
+
+
+fn set_fog_render(coord: &Coord, stdout: &mut Stdout) {
+    queue!(
+        stdout, 
+        MoveTo(coord.x +1, coord.y + 1),
+        SetForegroundColor(Color::DarkGrey),
+        Print('░'),
+        ResetColor
+    ).unwrap();
+} 
 
 
 pub fn render_world(world: &World, stdout: &mut Stdout) {
@@ -24,6 +51,21 @@ pub fn render_world(world: &World, stdout: &mut Stdout) {
             ResetColor,
             SetAttribute(Attribute::Reset),
         ).unwrap();
+    }
+    stdout.flush().unwrap();
+}
+
+
+pub fn render_faction_view(world: &mut World, stdout: &mut Stdout) {
+    let faction_view = world.get_faction_view(world.current_move_faction_id);
+
+    for idx in 0..world.map.len() {
+        let coord = world.coord(idx);
+        if let Some(view_entity) = faction_view.get(&coord) {
+            set_entity_render(world, &coord, view_entity, stdout); 
+            continue;
+        }
+        set_fog_render(&coord, stdout);
     }
     stdout.flush().unwrap();
 }
