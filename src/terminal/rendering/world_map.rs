@@ -57,7 +57,7 @@ pub fn render_world(world: &World, stdout: &mut Stdout) {
 
 
 pub fn render_faction_view(world: &mut World, stdout: &mut Stdout) {
-    let faction_view = world.get_faction_view(world.current_move_faction_id);
+    let faction_view = world.get_faction_visible_lands(world.current_move_faction_id, true);
 
     for idx in 0..world.map.len() {
         let coord = world.coord(idx);

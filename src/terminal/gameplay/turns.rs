@@ -38,11 +38,9 @@ fn turn_player(world: &mut World, stdout: &mut Stdout) {
 }
 
 pub fn start_game_cycle(world: &mut World, stdout: &mut Stdout) {
-    let factions_len = world.factions.len();
-
     loop {
-        for i in 0..factions_len {
-            if world.factions[i].is_dead {
+        for faction_id in 0..world.factions.len()  {
+            if world.factions[faction_id].is_dead {
                 continue;
             }
             turn_player(world, stdout);
