@@ -13,11 +13,9 @@ pub fn run_gameplay(stdout: &mut Stdout) {
     let mountains_cov: f32 = 0.05;
     let total_factions = 4;
     let min_req_base_distance = 7;
-    let mut total_players = 1;
     let energy_per_faction = 5;
 
-    let mut world = World::generate(
-        &mut total_players, 
+    let mut world = World::generate( 
         width, 
         height, 
         water_cov,

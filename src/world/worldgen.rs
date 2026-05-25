@@ -17,23 +17,17 @@ impl World {
         game_map
     }
 
-    fn create_factions(total_factions: u16, total_players: &mut i32, energy_per_faction: u16) -> Vec<Faction> {
+    fn create_factions(total_factions: u16, energy_per_faction: u16) -> Vec<Faction> {
         let mut factions: Vec<Faction> = Vec::new();
         for faction_id in 0..total_factions {
-            let mut is_ai = false;
-            if *total_players <= 0 {
-                is_ai = true;
-            }
             factions.push(
                 Faction { 
                     id: faction_id, 
-                    is_dead: false, 
-                    is_ai: is_ai, 
+                    is_dead: false,  
                     lands: HashMap::new(), 
                     current_move_energy: energy_per_faction 
                 }
             );
-            *total_players -= 1;
         }
         factions
     }
@@ -146,7 +140,6 @@ impl World {
     }
 
     pub fn generate(
-        total_players: &mut i32,
         width: u16, 
         height: u16, 
         water_cov: f32, 
@@ -157,7 +150,7 @@ impl World {
         energy_per_faction: u16,
     ) -> Self {
         let map: Vec<Entity> = Self::create_map(height, width);
-        let factions: Vec<Faction> = Self::create_factions(total_factions, total_players, energy_per_faction);
+        let factions: Vec<Faction> = Self::create_factions(total_factions, energy_per_faction);
         let mut world: World = World { 
             width, 
             height, 
