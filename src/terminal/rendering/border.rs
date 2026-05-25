@@ -4,29 +4,29 @@ use crossterm::{
 }; 
 
 
-pub fn draw_border(width: u16, height: u16, stdout: &mut Stdout) {
-    let max_width = width + 1;
-    let max_height = height + 1;
+pub fn draw_border(width: u16, height: u16, stdout: &mut Stdout, offset_x: u16, offset_y: u16) {
+    let max_width = width + offset_x + 1;
+    let max_height = height + offset_y + 1;
 
     for y in 0..=max_height {
         for x in 0..=max_width {
             let ch = match (x, y) {
 
-                (0, 0) => '╔',
-                (w, 0) if w == max_width => '╗',
+                (w, h) if w == offset_x && h == offset_y => '╔',
+                (w, h) if w == max_width && h == offset_y => '╗',
 
-                (0, h) if h == max_height => '╚',
+                (w, h) if w == offset_x && h == max_height => '╚',
 
                 (w, h)
                     if w == max_width
                     && h == max_height => '╝',
 
-                (0, _) => '║',
-                (w, _) if w == max_width => '║',
+                (w, h) if w == offset_x && h >= offset_y => '║',
+                (w, h) if w == max_width && h >= offset_y => '║',
 
-                (_, 0) => '═',
+                (w, h) if w >= offset_x && h == offset_y => '═',
 
-                (_, h) if h == max_height => '═',
+                (w, h) if w >= offset_x && h == max_height => '═',
 
                 _ => ' ',
             }; 

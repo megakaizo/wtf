@@ -1,5 +1,3 @@
-use std::collections::{VecDeque, HashSet};
-
 use rand::{rng, RngExt};
 
 use crate::world::types::{Coord, Entity, World, Cell};
@@ -64,7 +62,7 @@ impl World {
     ) -> bool {
 
         coord.x < self.width
-            && coord.y < self.height
+            && coord.y < self.height 
     }
 
     pub fn kill_faction(

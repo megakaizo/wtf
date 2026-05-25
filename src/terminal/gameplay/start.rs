@@ -6,6 +6,11 @@ use crate::terminal::gameplay::turns::start_game_cycle;
 
 
 pub fn run_gameplay(stdout: &mut Stdout) {
+    // terminal rendering
+    let offset_x: u16 = 20;
+    let offset_y: u16 = 5;
+
+    // world
     let width: u16 = 40;
     let height: u16 = 20;
     let forest_cov: f32 = 0.20;
@@ -25,9 +30,9 @@ pub fn run_gameplay(stdout: &mut Stdout) {
         min_req_base_distance,
         energy_per_faction,
     );
-    draw_border(width, height, stdout);
-    render_faction_view(&mut world, stdout);
-    start_game_cycle(&mut world, stdout); 
+    draw_border(width, height, stdout, offset_x, offset_y);
+    render_faction_view(&mut world, stdout, offset_x, offset_y);
+    start_game_cycle(&mut world, stdout, offset_x, offset_y); 
 
 }
 

@@ -56,8 +56,7 @@ impl World {
     }
 
     pub fn get_faction_visible_lands(&mut self, faction_id: u16, include_own: bool) -> HashMap<Coord, Entity> {
-        let faction = &mut self.factions[faction_id as usize];
-        let own_lands = faction.lands.clone();
+        let own_lands = self.factions[faction_id as usize].lands.clone();
         let mut total_lands: HashMap<Coord, Entity> = HashMap::new(); 
         for coord in own_lands.keys() {
             let visible_lands = self.get_visible_lands(coord);

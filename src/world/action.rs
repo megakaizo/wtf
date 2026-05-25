@@ -50,6 +50,19 @@ impl World {
     }
 
     fn is_valid_action(&self, coord: &Coord) -> bool {
+        if coord.x < 0 || coord.y < 0 {
+            return false;
+        }
+        if !self.in_bounds(*coord) {
+            return false;
+        } 
+        let old_entity = self.get(*coord);
+        if let Some(old_faction_id) = old_entity.faction_id {
+            if old_faction_id == self.current_move_faction_id {
+                return false;
+            }
+        }
+
         let neighbors = self.get_neighbors(coord, false); 
         neighbors.iter().any(|entity| {
             if entity.faction_id != Some(self.current_move_faction_id) {
@@ -84,15 +97,9 @@ impl World {
         self.current_move_faction_id = faction_id;
     }
 
-    pub fn action(&mut self, coord: Coord) {
-        let old_entity = *self.get(coord);
-        if let Some(old_faction_id) = old_entity.faction_id {
-            if old_faction_id == self.current_move_faction_id {
-                return
-            };
-        }
-
+    pub fn action(&mut self, coord: Coord) { 
         if self.is_valid_action(&coord) {
+            let old_entity = *self.get(coord); 
             let energy_cost = old_entity.cell.cost();
 
             {
