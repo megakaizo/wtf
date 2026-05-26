@@ -63,8 +63,8 @@ impl World {
             }
         }
 
-        let neighbors = self.get_neighbors(coord, false, true); 
-        neighbors.iter().any(|entity| {
+        let neighbors = self.get_neighbors_lands(coord, false, true); 
+        neighbors.values().any(|entity| {
             if entity.faction_id != Some(self.current_move_faction_id) {
                 return false;
             }

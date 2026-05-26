@@ -87,13 +87,13 @@ impl World {
                     continue;
                 }
 
-                let neighboors = self.get_neighbors(&coord, true, true);
+                let neighboors = self.get_neighbors_lands(&coord, true, true);
                 let mut forest_count = 0;
                 let mut water_count = 0;
                 let mut mountains_count = 0;
     
-                for neighboor in neighboors {
-                    match neighboor.cell {
+                for neighboor_entity in neighboors.values() {
+                    match neighboor_entity.cell {
                         Cell::Forest => forest_count += 1,
                         Cell::Water => water_count += 1,
                         Cell::Mountain => mountains_count += 1,

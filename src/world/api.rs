@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use rand::{rng, RngExt};
 
 use crate::world::types::{Coord, Entity, World, Cell};
@@ -74,9 +76,9 @@ impl World {
         faction.lands.clear();
     }
 
-    pub fn get_neighbors(&self, coord: &Coord, include_diagonal: bool, include_own: bool) -> Vec<Entity> {
+    pub fn get_neighbors_lands(&self, coord: &Coord, include_diagonal: bool, include_own: bool) -> HashMap<Coord, Entity> {
         let entity = self.get(*coord);
-        let mut total_neighbors: Vec<Entity> = Vec::new();
+        let mut total_neighbors: HashMap<Coord, Entity> = HashMap::new();
         let mut offsets = vec![
             (-1,  0),
             ( 0, -1),
@@ -110,7 +112,7 @@ impl World {
                         continue;
                     }
                 }
-                total_neighbors.push(neighboor);
+                total_neighbors.insert(n_coord, neighboor);
             }
         }
     

@@ -5,7 +5,7 @@ use crate::world::types::{Coord, World, Cell, Entity};
 
 impl World {
     fn get_visible_lands(&self, coord: &Coord) -> HashMap<Coord, Entity> {
-        let dirs = vec![
+        let dirs = [
             (-1,  0),
             ( 0, -1),
             ( 1,  0),
@@ -55,8 +55,7 @@ impl World {
         visible_entites
     }
  
-    pub fn get_lands_available_for_action() {
-        // тут сделать логику расчета доступных земель для хода (мб юзать существующее action api /
-        // делать стилизированную функцию по возможности)
+    pub fn get_lands_available_for_action(&self, coord: &Coord) {
+        
     }
 }
