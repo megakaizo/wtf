@@ -1,6 +1,6 @@
 use std::collections::{VecDeque, HashSet, HashMap};
 
-use crate::world::types::{Coord, World, Cell, Entity};
+use crate::world::types::{Coord, World, Entity};
 
 
 impl World {
@@ -55,7 +55,23 @@ impl World {
         visible_entites
     }
  
-    pub fn get_lands_available_for_action(&self, coord: &Coord) {
-        
+    pub fn get_lands_available_for_action(&mut self, coord: &Coord) -> HashMap<Coord, Entity> {
+        let entity = self.get(*coord);
+        let mut available_lands: HashMap<Coord, Entity> = HashMap::new();
+        if let Some(entity_faction_id) = entity.faction_id {
+            if entity_faction_id != self.current_move_faction_id {
+                return available_lands;
+            }
+            if self.has_supply(entity, coord) {
+                let neighbor_lands = self.get_neighbors_lands(coord, false, false);
+                for (coord, entity) in neighbor_lands.iter() {
+                    if self.is_valid_action(coord, false) {
+                        available_lands.insert(*coord, *entity);
+                    }
+                } 
+            }
+            
+        }
+        available_lands 
     }
 }

@@ -1,11 +1,11 @@
 use std::collections::{VecDeque, HashSet};
 
-use crate::world::types::{Coord, World, Cell};
+use crate::world::types::{Cell, Coord, Entity, World};
 
 
 impl World { 
     fn check_supply(&self, coord: &Coord, faction_id: &u16) -> bool {
-        let dirs = vec![
+        let dirs = [
             (1, 0),
             (0, 1),
             (-1, 0),
@@ -49,7 +49,19 @@ impl World {
         false
     }
 
-    fn is_valid_action(&self, coord: &Coord) -> bool {
+    pub fn has_supply(&self, entity: &Entity, coord: &Coord) -> bool {
+        match entity.cell {
+            Cell::Base => true,
+            Cell::Territory => true,
+            Cell::Fortress | Cell::Bridge => {
+                self.check_supply(coord, &self.current_move_faction_id)
+            },
+            _ => false,
+        }
+
+    }
+
+    pub fn is_valid_action(&mut self, coord: &Coord, check_neighbors_supply: bool) -> bool {
         if coord.x < 0 || coord.y < 0 {
             return false;
         }
@@ -62,21 +74,24 @@ impl World {
                 return false;
             }
         }
+        let energy_cost = old_entity.cell.cost();
+        let faction = &mut self.factions[self.current_move_faction_id as usize];
 
-        let neighbors = self.get_neighbors_lands(coord, false, true); 
-        neighbors.values().any(|entity| {
-            if entity.faction_id != Some(self.current_move_faction_id) {
-                return false;
-            }
-            match entity.cell {
-                Cell::Base => true,
-                Cell::Territory => true,
-                Cell::Fortress | Cell::Bridge => {
-                    self.check_supply(coord, &self.current_move_faction_id)
-                },
-                _ => false,
-            }
-        })
+        if energy_cost > faction.current_move_energy {
+            return false;
+        }
+
+        if check_neighbors_supply { 
+            let neighbors = self.get_neighbors_lands(coord, false, true); 
+            neighbors.iter().any(|(n_coord, entity)| {
+                if entity.faction_id != Some(self.current_move_faction_id) {
+                    return false;
+                }
+                self.has_supply(entity, n_coord)    
+            })
+        } else {
+            true
+        }
     }
 
     fn turn_next_faction(&mut self) { 
@@ -98,17 +113,12 @@ impl World {
     }
 
     pub fn action(&mut self, coord: Coord) { 
-        if self.is_valid_action(&coord) {
+        if self.is_valid_action(&coord, true) {
             let old_entity = *self.get(coord); 
             let energy_cost = old_entity.cell.cost();
 
             {
-                let faction = &mut self.factions[self.current_move_faction_id as usize];
-
-                if energy_cost > faction.current_move_energy {
-                    return;
-                }
-
+                let faction = &mut self.factions[self.current_move_faction_id as usize]; 
                 faction.current_move_energy -= energy_cost;
             }
 
