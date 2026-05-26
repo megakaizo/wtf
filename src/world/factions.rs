@@ -54,20 +54,7 @@ impl World {
         }
         visible_entites
     }
-
-    pub fn get_faction_visible_lands(&mut self, faction_id: u16, include_own: bool) -> HashMap<Coord, Entity> {
-        let own_lands = self.factions[faction_id as usize].lands.clone();
-        let mut total_lands: HashMap<Coord, Entity> = HashMap::new(); 
-        for coord in own_lands.keys() {
-            let visible_lands = self.get_visible_lands(coord);
-            total_lands.extend(visible_lands); 
-        }
-        if include_own {
-            total_lands.extend(own_lands);
-        }
-        total_lands
-    }
-
+ 
     pub fn get_lands_available_for_action() {
         // тут сделать логику расчета доступных земель для хода (мб юзать существующее action api /
         // делать стилизированную функцию по возможности)

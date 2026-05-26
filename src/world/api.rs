@@ -74,7 +74,8 @@ impl World {
         faction.lands.clear();
     }
 
-    pub fn get_neighbors(&self, coord: &Coord, include_diagonal: bool) -> Vec<Entity> {
+    pub fn get_neighbors(&self, coord: &Coord, include_diagonal: bool, include_own: bool) -> Vec<Entity> {
+        let entity = self.get(*coord);
         let mut total_neighbors: Vec<Entity> = Vec::new();
         let mut offsets = vec![
             (-1,  0),
@@ -104,6 +105,11 @@ impl World {
             let n_coord = Coord{x: n_x as u16, y: n_y as u16};
             if self.in_bounds(n_coord) {
                 let neighboor = *self.get(n_coord);
+                if !include_own {
+                    if entity.faction_id == neighboor.faction_id {
+                        continue;
+                    }
+                }
                 total_neighbors.push(neighboor);
             }
         }

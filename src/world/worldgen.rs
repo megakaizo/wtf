@@ -87,7 +87,7 @@ impl World {
                     continue;
                 }
 
-                let neighboors = self.get_neighbors(&coord, true);
+                let neighboors = self.get_neighbors(&coord, true, true);
                 let mut forest_count = 0;
                 let mut water_count = 0;
                 let mut mountains_count = 0;
