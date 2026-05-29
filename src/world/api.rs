@@ -6,7 +6,7 @@ use crate::world::types::{Coord, Entity, World, Cell};
 
 
 impl World {
-    pub fn manhattan(&self, c1: Coord, c2: Coord) -> u16 {
+    pub fn manhattan(&self, c1: &Coord, c2: &Coord) -> u16 {
         let dx = c1.x.abs_diff(c2.x);
         let dy = c1.y.abs_diff(c2.y);
         dx + dy

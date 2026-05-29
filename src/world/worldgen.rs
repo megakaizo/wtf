@@ -41,7 +41,7 @@ impl World {
                 let new_coord = self.random_coord(self.width, self.height);
                 let mut valid = true;
                 for base_coord in &bases_coords {
-                    if self.manhattan(new_coord, *base_coord) <= min_req_base_distance {
+                    if self.manhattan(&new_coord, &base_coord) <= min_req_base_distance {
                         valid = false;
                         break;
                     }
@@ -70,7 +70,7 @@ impl World {
         }
 
         for base_coord in bases_coords {
-            if self.manhattan(*coord, *base_coord) < 5 {
+            if self.manhattan(coord, base_coord) < 5 {
                 return true;
             }
         }
