@@ -20,21 +20,21 @@ fn reward_cost(entity: &Entity, world: &World) -> i32 {
     match entity.cell {
         Cell::Base => {
             if is_alive_faction(entity, world) {
-                return 20;
+                return 50;
             } else {
                 return 0;
             }
         },
         Cell::Bridge => {
             if is_alive_faction(entity, world) {
-                return 8;
+                return 20;
             } else {
                 return 0;
             }
         },
         Cell::Territory => {
             if is_alive_faction(entity, world) {
-                return 10;
+                return 30;
             } else {
                 return 0;
             }
