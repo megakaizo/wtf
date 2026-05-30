@@ -12,7 +12,6 @@ pub struct Faction {
     pub id: u16,
     pub lands: HashMap<Coord, Entity>,
     pub is_dead: bool,
-    pub is_ai: bool,
     pub current_move_energy: u16,
 }
 

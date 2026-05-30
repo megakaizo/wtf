@@ -1,4 +1,4 @@
-use std::collections::{VecDeque, HashSet};
+use std::collections::HashMap;
 
 use rand::{rng, RngExt};
 
@@ -6,7 +6,7 @@ use crate::world::types::{Coord, Entity, World, Cell};
 
 
 impl World {
-    pub fn manhattan(&self, c1: Coord, c2: Coord) -> u16 {
+    pub fn manhattan(&self, c1: &Coord, c2: &Coord) -> u16 {
         let dx = c1.x.abs_diff(c2.x);
         let dy = c1.y.abs_diff(c2.y);
         dx + dy
@@ -64,7 +64,7 @@ impl World {
     ) -> bool {
 
         coord.x < self.width
-            && coord.y < self.height
+            && coord.y < self.height 
     }
 
     pub fn kill_faction(
@@ -76,8 +76,9 @@ impl World {
         faction.lands.clear();
     }
 
-    pub fn get_neighbors(&self, coord: &Coord, include_diagonal: bool) -> Vec<Entity> {
-        let mut total_neighbors: Vec<Entity> = Vec::new();
+    pub fn get_neighbors_lands(&self, coord: &Coord, include_diagonal: bool, include_own: bool) -> HashMap<Coord, Entity> {
+        let entity = self.get(*coord);
+        let mut total_neighbors: HashMap<Coord, Entity> = HashMap::new();
         let mut offsets = vec![
             (-1,  0),
             ( 0, -1),
@@ -106,7 +107,12 @@ impl World {
             let n_coord = Coord{x: n_x as u16, y: n_y as u16};
             if self.in_bounds(n_coord) {
                 let neighboor = *self.get(n_coord);
-                total_neighbors.push(neighboor);
+                if !include_own {
+                    if entity.faction_id == neighboor.faction_id {
+                        continue;
+                    }
+                }
+                total_neighbors.insert(n_coord, neighboor);
             }
         }
     

@@ -1,11 +1,11 @@
 use std::collections::{VecDeque, HashSet, HashMap};
 
-use crate::world::types::{Coord, World, Cell, Entity};
+use crate::world::types::{Cell, Coord, Entity, World};
 
 
 impl World { 
     fn check_supply(&self, coord: &Coord, faction_id: &u16) -> bool {
-        let dirs = vec![
+        let dirs = [
             (1, 0),
             (0, 1),
             (-1, 0),
@@ -49,24 +49,52 @@ impl World {
         false
     }
 
-    fn is_valid_action(&self, coord: &Coord) -> bool {
-        let neighbors = self.get_neighbors(coord, false); 
-        neighbors.iter().any(|entity| {
-            if entity.faction_id != Some(self.current_move_faction_id) {
-                return false;
-            }
-            match entity.cell {
-                Cell::Base => true,
-                Cell::Territory => true,
-                Cell::Fortress | Cell::Bridge => {
-                    self.check_supply(coord, &self.current_move_faction_id)
-                },
-                _ => false,
-            }
-        })
+    pub fn has_supply(&self, entity: &Entity, coord: &Coord) -> bool {
+        match entity.cell {
+            Cell::Base => true,
+            Cell::Territory => true,
+            Cell::Fortress | Cell::Bridge => {
+                self.check_supply(coord, &self.current_move_faction_id)
+            },
+            _ => false,
+        }
+
     }
 
-    fn turn_next_faction(&mut self) { 
+    pub fn is_valid_action(&mut self, coord: &Coord, check_neighbors_supply: bool) -> bool {
+        if coord.x < 0 || coord.y < 0 {
+            return false;
+        }
+        if !self.in_bounds(*coord) {
+            return false;
+        } 
+        let old_entity = self.get(*coord);
+        if let Some(old_faction_id) = old_entity.faction_id {
+            if old_faction_id == self.current_move_faction_id {
+                return false;
+            }
+        }
+        let energy_cost = old_entity.cell.cost();
+        let faction = &mut self.factions[self.current_move_faction_id as usize];
+
+        if energy_cost > faction.current_move_energy {
+            return false;
+        }
+
+        if check_neighbors_supply { 
+            let neighbors = self.get_neighbors_lands(coord, false, true); 
+            neighbors.iter().any(|(n_coord, entity)| {
+                if entity.faction_id != Some(self.current_move_faction_id) {
+                    return false;
+                }
+                self.has_supply(entity, n_coord)    
+            })
+        } else {
+            true
+        }
+    }
+
+    pub fn turn_next_faction(&mut self) { 
         self.factions[self.current_move_faction_id as usize]
             .current_move_energy = self.energy_per_faction;
 
@@ -84,24 +112,13 @@ impl World {
         self.current_move_faction_id = faction_id;
     }
 
-    pub fn action(&mut self, coord: Coord) {
-        let old_entity = *self.get(coord);
-        if let Some(old_faction_id) = old_entity.faction_id {
-            if old_faction_id == self.current_move_faction_id {
-                return
-            };
-        }
-
-        if self.is_valid_action(&coord) {
+    pub fn action(&mut self, coord: Coord) { 
+        if self.is_valid_action(&coord, true) {
+            let old_entity = *self.get(coord); 
             let energy_cost = old_entity.cell.cost();
 
             {
-                let faction = &mut self.factions[self.current_move_faction_id as usize];
-
-                if energy_cost > faction.current_move_energy {
-                    return;
-                }
-
+                let faction = &mut self.factions[self.current_move_faction_id as usize]; 
                 faction.current_move_energy -= energy_cost;
             }
 
@@ -118,8 +135,8 @@ impl World {
         }
     }
 
-    fn get_visible_entities(&self, coord: &Coord) -> HashMap<Coord, Entity> {
-        let dirs = vec![
+    pub fn get_visible_lands(&self, coord: &Coord) -> HashMap<Coord, Entity> {
+        let dirs = [
             (-1,  0),
             ( 0, -1),
             ( 1,  0),
@@ -132,7 +149,7 @@ impl World {
         let mut visible_entites: HashMap<Coord, Entity> = HashMap::new(); 
         let mut visited: HashSet<Coord> = HashSet::new();
         let mut queue = VecDeque::from([*coord]);
-        
+     
         let entity = self.get(*coord);
 
         while let Some(q_coord) = queue.pop_front() {
@@ -169,18 +186,24 @@ impl World {
         visible_entites
     }
 
-    pub fn get_faction_view(&mut self, faction_id: u16) -> HashMap<Coord, Entity> {
-        let faction = &mut self.factions[faction_id as usize];
-        let own_lands = faction.lands.clone();
-        let mut total_entites: HashMap<Coord, Entity> = HashMap::new(); 
-        for coord in own_lands.keys() {
-            let visible_entities = self.get_visible_entities(coord);
-            total_entites.extend(visible_entities); 
+    pub fn get_lands_available_for_action(&mut self, coord: &Coord) -> HashMap<Coord, Entity> {
+        let entity = self.get(*coord);
+        let mut available_lands: HashMap<Coord, Entity> = HashMap::new();
+        if let Some(entity_faction_id) = entity.faction_id {
+            if entity_faction_id != self.current_move_faction_id {
+                return available_lands;
+            }
+            if self.has_supply(entity, coord) {
+                let neighbor_lands = self.get_neighbors_lands(coord, false, false);
+                for (coord, entity) in neighbor_lands.iter() {
+                    if self.is_valid_action(coord, false) {
+                        available_lands.insert(*coord, *entity);
+                    }
+                } 
+            }
+            
         }
-        total_entites.extend(own_lands);
-        total_entites
+        available_lands 
     }
-
-
 }
 
