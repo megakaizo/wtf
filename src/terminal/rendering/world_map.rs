@@ -63,10 +63,10 @@ pub fn render_world(world: &World, stdout: &mut Stdout) {
 }
 
 
-pub fn render_faction_view(world: &mut World, stdout: &mut Stdout, offset_x: u16, offset_y: u16) {
-    let mut faction_view = world.factions[world.current_move_faction_id as usize].lands.clone();
+pub fn render_faction_view(world: &mut World, faction_id: u16, stdout: &mut Stdout, offset_x: u16, offset_y: u16) {
+    let mut faction_view = world.factions[faction_id as usize].lands.clone();
 
-    for coord in world.factions[world.current_move_faction_id as usize].lands.keys() {
+    for coord in world.factions[faction_id as usize].lands.keys() {
         faction_view.extend(world.get_visible_lands(coord));   
     } 
 

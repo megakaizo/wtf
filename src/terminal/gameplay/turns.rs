@@ -1,13 +1,24 @@
-use std::io::{Stdout};
+use std::{io::Stdout, time::Duration};
 
-use crossterm::{event::{Event, read, KeyCode, MouseEventKind, MouseButton}};
+use crossterm::{event::{Event, poll, read, KeyCode, MouseEventKind, MouseButton}};
 
 use crate::world::types::{World, Coord};
-use crate::ai::turns::turn_ai;
 use crate::terminal::rendering::world_map::{render_faction_view};
 
 
-fn turn_player(world: &mut World, stdout: &mut Stdout, offset_x: u16, offset_y: u16,) {
+fn clear_buffer() {
+    while poll(Duration::from_millis(0)).unwrap() {
+        let _ = read();
+    }
+}
+
+
+pub fn turn_player(world: &mut World, stdout: &mut Stdout, offset_x: u16, offset_y: u16) {
+    clear_buffer();
+
+    let view_faction_id = world.current_move_faction_id;
+    render_faction_view(world, view_faction_id, stdout, offset_x, offset_y);
+
     match read().unwrap() {
         Event::Mouse(event) => {
             match event.kind {
@@ -20,9 +31,13 @@ fn turn_player(world: &mut World, stdout: &mut Stdout, offset_x: u16, offset_y: 
                     let coord = Coord { x, y };
                     if world.in_bounds(coord) {
                         world.action(coord);
-                        render_faction_view(world, stdout, offset_x, offset_y);
+                        render_faction_view(world, view_faction_id, stdout, offset_x, offset_y);
                     }
                 }
+                MouseEventKind::Down(MouseButton::Right) => {
+                    world.turn_next_faction();
+                    render_faction_view(world, view_faction_id, stdout, offset_x, offset_y);
+                },
                 _ => {}
             }
         }
@@ -36,19 +51,3 @@ fn turn_player(world: &mut World, stdout: &mut Stdout, offset_x: u16, offset_y: 
         _ => {} 
     }
 }
-
-pub fn start_game_cycle(world: &mut World, stdout: &mut Stdout, offset_x: u16, offset_y: u16, ai_factions: Vec<u16>) {
-    loop {
-        for faction_id in 0..world.factions.len()  {
-            if world.factions[faction_id].is_dead {
-                continue;
-            } else if ai_factions.contains(&(faction_id as u16)) {
-                turn_ai(world, stdout, offset_x, offset_y);
-            } else {
-                turn_player(world, stdout, offset_x, offset_y);
-            }
-        }
-    }
-}
-
-

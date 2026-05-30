@@ -94,7 +94,7 @@ impl World {
         }
     }
 
-    fn turn_next_faction(&mut self) { 
+    pub fn turn_next_faction(&mut self) { 
         self.factions[self.current_move_faction_id as usize]
             .current_move_energy = self.energy_per_faction;
 
@@ -205,6 +205,5 @@ impl World {
         }
         available_lands 
     }
-
 }
 
