@@ -13,11 +13,11 @@ forest_coverage = 0.20
 mountains_coverage = 0.05
 
 [world.cells]
-empty = { cost = 1, vision = 0, capture_result = "Territory" }
-base = { cost = 1, vision = 5, capture_result = "Fortress" }
-territory = { cost = 1, vision = 5, capture_result = "Fortress" }
-fortress = { cost = 999, vision = 5, capture_result = "Fortress" }
-forest = { cost = 2, vision = 0, capture_result = "Territory" }
-water = { cost = 4, vision = 0, capture_result = "Bridge" }
-mountain = { cost = 3, vision = 0, capture_result = "Territory" }
-bridge = { cost = 1, vision = 5, capture_result = "Bridge" }
+Empty = { cost = 1, vision = 0, capture_result = "Territory" }
+Base = { cost = 1, vision = 5, capture_result = "Fortress" }
+Territory = { cost = 1, vision = 5, capture_result = "Fortress" }
+Fortress = { cost = 999, vision = 5, capture_result = "Fortress" }
+Forest = { cost = 2, vision = 0, capture_result = "Territory" }
+Water = { cost = 4, vision = 0, capture_result = "Bridge" }
+Mountain = { cost = 3, vision = 0, capture_result = "Territory" }
+Bridge = { cost = 1, vision = 5, capture_result = "Bridge" }

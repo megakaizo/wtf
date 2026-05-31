@@ -1,5 +1,15 @@
 use std::collections::HashMap;
 
+use serde::Deserialize;
+
+
+#[derive(Debug, Deserialize)]
+pub struct CellRule {
+    pub cost: u16,
+    pub vision: i32,
+    pub capture_result: Cell,
+}
+
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Coord {
@@ -30,10 +40,19 @@ pub struct World {
     pub map: Vec<Entity>,
     pub energy_per_faction: u16,
     pub current_move_faction_id: u16, 
+    pub cell_rules: HashMap<Cell, CellRule>,
 }
 
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(
+    Clone, 
+    Copy, 
+    PartialEq, 
+    Eq, 
+    Hash, 
+    Debug, 
+    Deserialize
+)]
 pub enum Cell {
     Empty,
     Base,
@@ -46,7 +65,8 @@ pub enum Cell {
 }
 
 
-impl Cell { 
+impl Cell {
+
     pub fn cost(self) -> u16 {
 
         match self {
