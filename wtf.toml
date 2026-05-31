@@ -1,0 +1,23 @@
+[world.map]
+width = 20
+height = 40
+
+[world.factions]
+energy_per_faction = 5
+total_factions = 4
+
+[world.worldgen]
+min_req_base_distance = 7
+water_coverage = 0.15
+forest_coverage = 0.20
+mountains_coverage = 0.05
+
+[world.cells]
+empty = { cost = 1, vision = 0, capture_result = "Territory" }
+base = { cost = 1, vision = 5, capture_result = "Fortress" }
+territory = { cost = 1, vision = 5, capture_result = "Fortress" }
+fortress = { cost = 999, vision = 5, capture_result = "Fortress" }
+forest = { cost = 2, vision = 0, capture_result = "Territory" }
+water = { cost = 4, vision = 0, capture_result = "Bridge" }
+mountain = { cost = 3, vision = 0, capture_result = "Territory" }
+bridge = { cost = 1, vision = 5, capture_result = "Bridge" }
