@@ -65,49 +65,4 @@ pub enum Cell {
 }
 
 
-impl Cell {
 
-    pub fn cost(self) -> u16 {
-
-        match self {
-
-            Self::Empty => 1,
-            Self::Forest => 2,
-            Self::Territory => 1,
-            Self::Base => 1,
-            Self::Fortress => 999,
-            Self::Water => 4,
-            Self::Mountain => 3,
-            Self::Bridge => 1,
-        }
-    }
-
-    pub fn capture_result(self) -> Cell {
-
-        match self {
-
-            Self::Empty => Cell::Territory,
-            Self::Forest => Cell::Territory,
-            Self::Territory => Cell::Fortress,
-            Self::Base => Cell::Fortress,
-            Self::Fortress => Cell::Fortress,
-            Self::Water => Cell::Bridge,
-            Self::Mountain => Cell::Territory,
-            Self::Bridge => Cell::Bridge,
-        }
-    }
-
-    pub fn vision(self) -> i32 {
-        match self {
-            Self::Empty => 0,
-            Self::Forest => 0,
-            Self::Territory => 5,
-            Self::Base => 5,
-            Self::Fortress => 5,
-            Self::Water => 0,
-            Self::Mountain => 0,
-            Self::Bridge => 5,
-
-        }
-    }
-}

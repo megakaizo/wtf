@@ -64,7 +64,7 @@ pub fn select_best_action(
     let mut best_action_coord: Option<Coord> = None;
 
     for (coord_action, entity_action) in available_for_action_lands.iter() {
-        let action_cost = entity_action.cell.cost();
+        let action_cost = world.cost(entity_action.cell);
         if action_cost > world.factions[world.current_move_faction_id as usize].current_move_energy {
             continue;
         }
