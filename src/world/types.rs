@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct CellRule {
     pub cost: u16,
     pub vision: i32,
@@ -51,7 +51,8 @@ pub struct World {
     Eq, 
     Hash, 
     Debug, 
-    Deserialize
+    Deserialize, 
+    Serialize
 )]
 pub enum Cell {
     Empty,

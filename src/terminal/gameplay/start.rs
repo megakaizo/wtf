@@ -49,8 +49,7 @@ pub fn start_game_cycle(
 
 
 pub fn run_gameplay(stdout: &mut Stdout) {
-    let config: Config = Config::from_toml("./wtf.toml".to_string()).unwrap();
-
+    let config: Config = Config::load("wtf.toml".to_string());
     
     let mut world = World::generate(config.world);
 
