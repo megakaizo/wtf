@@ -21,3 +21,10 @@ Forest = { cost = 2, vision = 0, capture_result = "Territory" }
 Water = { cost = 4, vision = 0, capture_result = "Bridge" }
 Mountain = { cost = 3, vision = 0, capture_result = "Territory" }
 Bridge = { cost = 1, vision = 5, capture_result = "Bridge" }
+
+[ai]
+ai_count = 3
+
+[terminal]
+offset_x = 20
+offset_y = 5
