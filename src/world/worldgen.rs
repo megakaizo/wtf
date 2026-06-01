@@ -2,30 +2,30 @@ use std::collections::HashMap;
 
 use rand::{rng, RngExt};
 
-use crate::world::types::{Coord, Entity, World, Cell, Faction};
+use crate::world::{config::{FactionsRules, MapSize, WorldConfig}, types::{Cell, Coord, Entity, Faction, World}};
 
 
 impl World {
-    fn create_map(height: u16, width: u16) -> Vec<Entity> {
+    fn create_map(map: &MapSize) -> Vec<Entity> {
         let game_map: Vec<Entity> = vec![
                 Entity{
                 cell: Cell::Empty,
                 faction_id: None
             };
-            width as usize * height as usize 
+            map.width as usize * map.height as usize 
         ];
         game_map
     }
 
-    fn create_factions(total_factions: u16, energy_per_faction: u16) -> Vec<Faction> {
+    fn create_factions(factions_rules: &FactionsRules) -> Vec<Faction> {
         let mut factions: Vec<Faction> = Vec::new();
-        for faction_id in 0..total_factions {
+        for faction_id in 0..factions_rules.total_factions {
             factions.push(
                 Faction { 
                     id: faction_id, 
                     is_dead: false,  
                     lands: HashMap::new(), 
-                    current_move_energy: energy_per_faction 
+                    current_move_energy: factions_rules.energy_per_faction 
                 }
             );
         }
@@ -140,31 +140,30 @@ impl World {
     }
 
     pub fn generate(
-        width: u16, 
-        height: u16, 
-        water_cov: f32, 
-        forest_cov: f32,
-        mountains_cov: f32,
-        total_factions: u16, 
-        min_req_base_distance: u16,
-        energy_per_faction: u16,
+        config: WorldConfig,    
     ) -> Self {
-        let map: Vec<Entity> = Self::create_map(height, width);
-        let factions: Vec<Faction> = Self::create_factions(total_factions, energy_per_faction);
+        let size = config.size;
+        let factions_rules = config.factions;
+        let cell_rules = config.cells;
+        let gen_rules = config.worldgen;
+
+        let map: Vec<Entity> = Self::create_map(&size);
+        let factions: Vec<Faction> = Self::create_factions(&factions_rules);
         let mut world: World = World { 
-            width, 
-            height, 
+            height: size.width, 
+            width: size.height, 
             map, 
             factions, 
-            energy_per_faction,
+            energy_per_faction: factions_rules.energy_per_faction,
             current_move_faction_id: 0,
+            cell_rules: cell_rules,
         };
-        let bases_coords = world.generate_bases(min_req_base_distance);
+        let bases_coords = world.generate_bases(gen_rules.min_req_base_distance);
         world.generate_terrains( 
             &bases_coords,
-            water_cov,
-            forest_cov,
-            mountains_cov,
+            gen_rules.water_coverage,
+            gen_rules.forest_coverage,
+            gen_rules.mountains_coverage
         );
         world
     }

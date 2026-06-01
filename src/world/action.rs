@@ -74,7 +74,7 @@ impl World {
                 return false;
             }
         }
-        let energy_cost = old_entity.cell.cost();
+        let energy_cost = self.cost(old_entity.cell);
         let faction = &mut self.factions[self.current_move_faction_id as usize];
 
         if energy_cost > faction.current_move_energy {
@@ -115,14 +115,14 @@ impl World {
     pub fn action(&mut self, coord: Coord) { 
         if self.is_valid_action(&coord, true) {
             let old_entity = *self.get(coord); 
-            let energy_cost = old_entity.cell.cost();
+            let energy_cost = self.cost(old_entity.cell);
 
             {
                 let faction = &mut self.factions[self.current_move_faction_id as usize]; 
                 faction.current_move_energy -= energy_cost;
             }
 
-            let captured_cell = old_entity.cell.capture_result();
+            let captured_cell = self.capture_result(old_entity.cell);
             if let Some(captured_entity_faction_id) = old_entity.faction_id 
                 && old_entity.cell == Cell::Base {
                     self.kill_faction(captured_entity_faction_id);
@@ -160,10 +160,10 @@ impl World {
                     continue;
                 }
 
-                if nx < coord.x as i32 - entity.cell.vision() 
-                    || nx > coord.x as i32 + entity.cell.vision()
-                    || ny < coord.y as i32 - entity.cell.vision()
-                    || ny > coord.y as i32 + entity.cell.vision() {
+                if nx < coord.x as i32 - self.vision(entity.cell)
+                    || nx > coord.x as i32 + self.vision(entity.cell)
+                    || ny < coord.y as i32 - self.vision(entity.cell)
+                    || ny > coord.y as i32 + self.vision(entity.cell) {
                     continue;
                 }
                 let next = Coord{x: nx as u16, y: ny as u16};

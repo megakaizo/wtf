@@ -118,5 +118,17 @@ impl World {
     
         total_neighbors
     } 
+
+    pub fn cost(&self, cell: Cell) -> u16 {
+        return self.cell_rules.get(&cell).unwrap().cost
+    }
+
+    pub fn vision(&self, cell: Cell) -> i32 {
+        return self.cell_rules.get(&cell).unwrap().vision
+    }
+
+    pub fn capture_result(&self, cell: Cell) -> Cell {
+        return self.cell_rules.get(&cell).unwrap().capture_result
+    }
 }
 
