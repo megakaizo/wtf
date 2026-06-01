@@ -7,14 +7,14 @@ use crate::world::types::{Cell, CellRule};
 
 #[derive(Debug, Deserialize)]
 pub struct WorldConfig {
-    pub map: MapRules,
+    pub size: MapSize,
     pub factions: FactionsRules,
     pub worldgen: WorldGenRules,
     pub cells: HashMap<Cell, CellRule>,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct MapRules {
+pub struct MapSize {
     pub width: u16,
     pub height: u16,
 }
