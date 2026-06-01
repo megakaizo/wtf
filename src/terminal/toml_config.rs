@@ -59,7 +59,7 @@ impl Config {
             Ok(config) => config,
             Err(_) => {
                 let config = Config::default();
-                Self::save(&config, "wtf.toml".to_string());
+                Self::save(&config, "wtf.toml".to_string()).unwrap();
                 return config;
             }
         }
