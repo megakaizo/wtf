@@ -11,6 +11,7 @@ pub struct WorldConfig {
     pub factions: FactionsRules,
     pub worldgen: WorldGenRules,
     pub cells: HashMap<Cell, CellRule>,
+    pub fog_of_war_enable: bool,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -37,6 +38,7 @@ pub struct WorldGenRules {
 
 impl WorldConfig {
     pub fn default() -> Self {
+        let fog_of_war_enable = true;
         let size = MapSize {
             width: 20,
             height: 40,
@@ -67,6 +69,7 @@ impl WorldConfig {
             factions,
             worldgen,
             cells,
+            fog_of_war_enable
         }
     }
 }

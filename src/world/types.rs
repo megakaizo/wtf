@@ -41,6 +41,7 @@ pub struct World {
     pub energy_per_faction: u16,
     pub current_move_faction_id: u16, 
     pub cell_rules: HashMap<Cell, CellRule>,
+    pub fog_of_war: bool,
 }
 
 
