@@ -1,5 +1,6 @@
 use std::io::Stdout;
 
+use crate::terminal::rendering::world_map::render_world;
 use crate::terminal::toml_config::Config;
 use crate::world::types::World;
 use crate::terminal::rendering::{world_map::render_faction_view, border::draw_border};
@@ -35,7 +36,11 @@ pub fn start_game_cycle(
     loop {
         if players_count == 1 {
             let player_faction_id = world.factions[0].id;
-            render_faction_view(world, player_faction_id, stdout, offset_x, offset_y);
+            if world.fog_of_war {
+                render_faction_view(world, player_faction_id, stdout, offset_x, offset_y);
+            } else {
+                render_world(world, stdout, offset_x, offset_y);
+            }
         }
         if world.factions[world.current_move_faction_id as usize].is_dead {
                 continue;

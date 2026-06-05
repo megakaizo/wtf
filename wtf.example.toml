@@ -22,6 +22,8 @@ Water = { cost = 4, vision = 0, capture_result = "Bridge" }
 Mountain = { cost = 3, vision = 0, capture_result = "Territory" }
 Bridge = { cost = 1, vision = 5, capture_result = "Bridge" }
 
+world.fog_of_war_enable = true
+
 [ai]
 ai_count = 3
 

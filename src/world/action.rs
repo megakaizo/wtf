@@ -136,6 +136,19 @@ impl World {
     }
 
     pub fn get_visible_lands(&self, coord: &Coord) -> HashMap<Coord, Entity> {
+        if !self.fog_of_war {
+            let mut visible_lands = HashMap::new();
+
+            for (idx, e) in self.map.iter().enumerate() {
+                let c = self.coord(idx);
+                if &c == coord {
+                    continue;
+                }
+                visible_lands.insert(c, *e);
+            }
+            return visible_lands
+        }
+        
         let dirs = [
             (-1,  0),
             ( 0, -1),
@@ -146,7 +159,7 @@ impl World {
             (-1, 1),
             (1, 1),
         ];
-        let mut visible_entites: HashMap<Coord, Entity> = HashMap::new(); 
+        let mut visible_lands: HashMap<Coord, Entity> = HashMap::new(); 
         let mut visited: HashSet<Coord> = HashSet::new();
         let mut queue = VecDeque::from([*coord]);
      
@@ -179,11 +192,11 @@ impl World {
                 if !visited.contains(&next) {
                     visited.insert(next);
                     queue.push_back(next);
-                    visible_entites.insert(next, *next_entity);
+                    visible_lands.insert(next, *next_entity);
                 }    
             }
         }
-        visible_entites
+        visible_lands
     }
 
     pub fn get_lands_available_for_action(&mut self, coord: &Coord) -> HashMap<Coord, Entity> {

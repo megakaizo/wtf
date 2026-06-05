@@ -42,7 +42,7 @@ fn set_fog_render(coord: &Coord, stdout: &mut Stdout, offset_x: u16, offset_y: u
 } 
 
 
-pub fn render_world(world: &World, stdout: &mut Stdout) {
+pub fn render_world(world: &World, stdout: &mut Stdout, offset_x: u16, offset_y: u16) {
     for idx in 0..world.map.len() {
         let coord = world.coord(idx);
         let entity = world.get(coord);
@@ -51,7 +51,7 @@ pub fn render_world(world: &World, stdout: &mut Stdout) {
         let color = world.get_color(coord);
         queue!(
             stdout,
-            MoveTo(coord.x + 1, coord.y + 1),
+            MoveTo(coord.x + offset_x + 1, coord.y + offset_y + 1),
             SetForegroundColor(color),
             SetAttribute(attr),
             Print(glyph),
