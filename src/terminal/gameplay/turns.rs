@@ -2,7 +2,7 @@ use std::{io::Stdout, time::Duration};
 
 use crossterm::{event::{Event, poll, read, KeyCode, MouseEventKind, MouseButton}};
 
-use crate::world::types::{World, Coord};
+use crate::{terminal::rendering::world_map::render_world, world::types::{Coord, World}};
 use crate::terminal::rendering::world_map::{render_faction_view};
 
 
@@ -17,8 +17,6 @@ pub fn turn_player(world: &mut World, stdout: &mut Stdout, offset_x: u16, offset
     clear_buffer();
 
     let view_faction_id = world.current_move_faction_id;
-    render_faction_view(world, view_faction_id, stdout, offset_x, offset_y);
-
     match read().unwrap() {
         Event::Mouse(event) => {
             match event.kind {
@@ -30,14 +28,10 @@ pub fn turn_player(world: &mut World, stdout: &mut Stdout, offset_x: u16, offset
                     let y = event.row - offset_y - 1;
                     let coord = Coord { x, y };
                     if world.in_bounds(coord) {
-                        world.action(coord);
-                        render_faction_view(world, view_faction_id, stdout, offset_x, offset_y);
+                        world.action(coord); 
                     }
                 }
-                MouseEventKind::Down(MouseButton::Right) => {
-                    world.turn_next_faction();
-                    render_faction_view(world, view_faction_id, stdout, offset_x, offset_y);
-                },
+                MouseEventKind::Down(MouseButton::Right) => world.turn_next_faction(),
                 _ => {}
             }
         }
@@ -49,5 +43,10 @@ pub fn turn_player(world: &mut World, stdout: &mut Stdout, offset_x: u16, offset
             }
         }
         _ => {} 
+    }
+    if world.fog_of_war {
+        render_faction_view(world, view_faction_id, stdout, offset_x, offset_y);
+    } else {
+        render_world(world, stdout, offset_x, offset_y);
     }
 }

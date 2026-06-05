@@ -9,10 +9,22 @@ use crate::ai::action_select::select_best_action;
 pub fn turn_ai(world: &mut World) {
     let mut visible_lands: HashMap<Coord, Entity> = HashMap::new();
     let mut available_for_action_lands: HashMap<Coord, Entity> = HashMap::new();
+    let faction_lands = world.factions[world.current_move_faction_id as usize].lands.clone();
 
-    for coord in world.factions[world.current_move_faction_id as usize].lands.clone().keys() {
-        visible_lands.extend(world.get_visible_lands(coord));
-        available_for_action_lands.extend(world.get_lands_available_for_action(coord));
+    if world.fog_of_war {
+        for coord in faction_lands.keys() {
+            visible_lands.extend(world.get_visible_lands(coord));
+            available_for_action_lands.extend(world.get_lands_available_for_action(coord));
+        }
+    } else {
+        let is_checked_visible = false;
+        for coord in faction_lands.keys() {
+            if !is_checked_visible {
+                visible_lands.extend(world.get_visible_lands(coord));
+            }
+
+            available_for_action_lands.extend(world.get_lands_available_for_action(coord));
+        }
     }
 
     if available_for_action_lands.is_empty() {

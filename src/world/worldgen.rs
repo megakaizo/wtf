@@ -146,6 +146,7 @@ impl World {
         let factions_rules = config.factions;
         let cell_rules = config.cells;
         let gen_rules = config.worldgen;
+        let fog_of_war_enable = config.fog_of_war_enable;
 
         let map: Vec<Entity> = Self::create_map(&size);
         let factions: Vec<Faction> = Self::create_factions(&factions_rules);
@@ -157,6 +158,7 @@ impl World {
             energy_per_faction: factions_rules.energy_per_faction,
             current_move_faction_id: 0,
             cell_rules: cell_rules,
+            fog_of_war: fog_of_war_enable,
         };
         let bases_coords = world.generate_bases(gen_rules.min_req_base_distance);
         world.generate_terrains( 
